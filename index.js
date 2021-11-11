@@ -22,7 +22,7 @@ async function run() {
 
     const database = client.db("frage-perfume");
     const perfumesCollection = database.collection("perfumes");
-    const ordersCollection = database.collection("orders");
+    const orderCollection = database.collection("orders");
 
     // GET ALL PERFUMES
     app.get("/perfumes", async (req, res) => {
@@ -41,8 +41,16 @@ async function run() {
     // ADD ORDER FROM USER
     app.post("/order", async (req, res) => {
       const order = req.body;
-      const result = await ordersCollection.insertOne(order);
-      res.send(result);
+      const result = await orderCollection.insertOne(order);
+      res.json(result);
+    });
+
+    // GET ORDERS BY USER EMAIL
+    app.get("/myOrders/:email", async (req, res) => {
+      const mail = req.params.email;
+      const query = { email: mail };
+      const orders = await orderCollection.find(query).toArray();
+      res.json(orders);
     });
   } finally {
     // Ensures that the client will close when you finish/error
