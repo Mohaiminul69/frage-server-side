@@ -52,6 +52,15 @@ async function run() {
       const orders = await orderCollection.find(query).toArray();
       res.json(orders);
     });
+
+    // CANCELING ORDER
+    app.delete("/deleteOrder/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await orderCollection.deleteOne(query);
+      console.log(id, result);
+      res.send(result);
+    });
   } finally {
     // Ensures that the client will close when you finish/error
     //   await client.close();
