@@ -23,6 +23,7 @@ async function run() {
     const database = client.db("frage-perfume");
     const perfumesCollection = database.collection("perfumes");
     const orderCollection = database.collection("orders");
+    const usersCollection = database.collection("users");
 
     // GET ALL PERFUMES
     app.get("/perfumes", async (req, res) => {
@@ -60,6 +61,27 @@ async function run() {
       const result = await orderCollection.deleteOne(query);
       console.log(id, result);
       res.send(result);
+    });
+
+    // POST USERS DATA
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const result = await usersCollection.insertOne(user);
+      res.json(result);
+    });
+
+    // UPDATE USER DATA
+    app.put("/users", async (req, res) => {
+      const user = req.body;
+      const filter = { email: user.email };
+      const options = { upsert: true };
+      const updateDoc = { $set: user };
+      const result = await usersCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.json(result);
     });
   } finally {
     // Ensures that the client will close when you finish/error
