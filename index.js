@@ -87,22 +87,40 @@ async function run() {
     // MAKING ADMIN FROM EXISTING USERS
     app.put("/users/admin", async (req, res) => {
       const user = req.body;
-      const requester = req.decodedEmail;
-      if (requester) {
-        const requesterAccount = await usersCollection.findOne({
-          email: requester,
-        });
-        if (requesterAccount.role === "admin") {
-          const filter = { email: user.email };
-          const updateDoc = { $set: { role: "admin" } };
-          const result = await usersCollection.updateOne(filter, updateDoc);
-          res.json(result);
-        }
-      } else {
-        res
-          .status(403)
-          .json({ message: "You do not have Access to make Admin" });
+      const filter = { email: user.email };
+      const updateDoc = { $set: { role: "admin" } };
+      const result = await usersCollection.updateOne(filter, updateDoc);
+      res.json(result);
+
+      // const user = req.body;
+      // const requester = req.decodedEmail;
+      // if (requester) {
+      //   const requesterAccount = await usersCollection.findOne({
+      //     email: requester,
+      //   });
+      //   if (requesterAccount.role === "admin") {
+      //     const filter = { email: user.email };
+      //     const updateDoc = { $set: { role: "admin" } };
+      //     const result = await usersCollection.updateOne(filter, updateDoc);
+      //     res.json(result);
+      //   }
+      // } else {
+      //   res
+      //     .status(403)
+      //     .json({ message: "You do not have Access to make Admin" });
+      // }
+    });
+
+    // CHECKING IF THE USER IS ADMIN OR NOT
+    app.get("/users/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      let isAdmin = false;
+      if (user?.role === "admin") {
+        isAdmin = true;
       }
+      res.json({ admin: isAdmin });
     });
   } finally {
     // Ensures that the client will close when you finish/error
