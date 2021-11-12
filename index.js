@@ -24,6 +24,7 @@ async function run() {
     const perfumesCollection = database.collection("perfumes");
     const orderCollection = database.collection("orders");
     const usersCollection = database.collection("users");
+    const reviewsCollection = database.collection("reviews");
 
     // GET ALL PERFUMES
     app.get("/perfumes", async (req, res) => {
@@ -157,6 +158,13 @@ async function run() {
           status: updateStatus.status,
         },
       });
+      res.send(result);
+    });
+
+    // ADDING REVIEWS
+    app.post("/addReview", async (req, res) => {
+      const product = req.body;
+      const result = await reviewsCollection.insertOne(product);
       res.send(result);
     });
   } finally {
