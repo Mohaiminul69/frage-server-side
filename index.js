@@ -91,24 +91,6 @@ async function run() {
       const updateDoc = { $set: { role: "admin" } };
       const result = await usersCollection.updateOne(filter, updateDoc);
       res.json(result);
-
-      // const user = req.body;
-      // const requester = req.decodedEmail;
-      // if (requester) {
-      //   const requesterAccount = await usersCollection.findOne({
-      //     email: requester,
-      //   });
-      //   if (requesterAccount.role === "admin") {
-      //     const filter = { email: user.email };
-      //     const updateDoc = { $set: { role: "admin" } };
-      //     const result = await usersCollection.updateOne(filter, updateDoc);
-      //     res.json(result);
-      //   }
-      // } else {
-      //   res
-      //     .status(403)
-      //     .json({ message: "You do not have Access to make Admin" });
-      // }
     });
 
     // CHECKING IF THE USER IS ADMIN OR NOT
@@ -121,6 +103,13 @@ async function run() {
         isAdmin = true;
       }
       res.json({ admin: isAdmin });
+    });
+
+    // ADDING NEW PRODUCT
+    app.post("/addProduct", async (req, res) => {
+      const product = req.body;
+      const result = await perfumesCollection.insertOne(product);
+      res.send(result);
     });
   } finally {
     // Ensures that the client will close when you finish/error
