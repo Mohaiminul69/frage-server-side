@@ -39,6 +39,14 @@ async function run() {
       res.json(result);
     });
 
+    // GETTING SINGLE ORDER FROM USER
+    app.get("/order/:perfumeId", async (req, res) => {
+      const id = req.params.perfumeId;
+      const query = { _id: ObjectId(id) };
+      const result = await orderCollection.findOne(query);
+      res.json(result);
+    });
+
     // ADD ORDER FROM USER
     app.post("/order", async (req, res) => {
       const order = req.body;
