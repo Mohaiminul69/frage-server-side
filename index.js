@@ -59,7 +59,6 @@ async function run() {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await orderCollection.deleteOne(query);
-      console.log(id, result);
       res.send(result);
     });
 
@@ -109,6 +108,20 @@ async function run() {
     app.post("/addProduct", async (req, res) => {
       const product = req.body;
       const result = await perfumesCollection.insertOne(product);
+      res.send(result);
+    });
+
+    // GET ALL PRODUCTS
+    app.get("/allProducts", async (req, res) => {
+      const result = await perfumesCollection.find({}).toArray();
+      res.json(result);
+    });
+
+    // DELETING PRODUCT
+    app.delete("/deleteProduct/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await perfumesCollection.deleteOne(query);
       res.send(result);
     });
   } finally {
