@@ -124,6 +124,12 @@ async function run() {
       const result = await perfumesCollection.deleteOne(query);
       res.send(result);
     });
+
+    // GET ALL ORDER MADE BY USERS/CUSTOMERS
+    app.get("/allOrders", async (req, res) => {
+      const result = await orderCollection.find({}).toArray();
+      res.send(result);
+    });
   } finally {
     // Ensures that the client will close when you finish/error
     //   await client.close();
