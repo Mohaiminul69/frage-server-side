@@ -128,7 +128,7 @@ async function run() {
     });
 
     // GET ALL PRODUCTS
-    // DONE TWISE FOR SECURITY PURPOSE
+    // WAS USED FOR TESTING
     app.get("/allProducts", async (req, res) => {
       const result = await perfumesCollection.find({}).toArray();
       res.json(result);
