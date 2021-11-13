@@ -27,8 +27,15 @@ async function run() {
     const reviewsCollection = database.collection("reviews");
 
     // GET ALL PERFUMES
-    app.get("/perfumes", async (req, res) => {
-      const result = await perfumesCollection.find({}).toArray();
+    app.get("/perfumes/:category", async (req, res) => {
+      const category = req.params.category;
+      let result;
+      if (category === "all") {
+        result = await perfumesCollection.find({}).toArray();
+      } else {
+        const query = { madeFor: category };
+        result = await perfumesCollection.find(query).toArray();
+      }
       res.json(result);
     });
 
@@ -121,6 +128,7 @@ async function run() {
     });
 
     // GET ALL PRODUCTS
+    // DONE TWISE FOR SECURITY PURPOSE
     app.get("/allProducts", async (req, res) => {
       const result = await perfumesCollection.find({}).toArray();
       res.json(result);
