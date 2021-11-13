@@ -167,6 +167,12 @@ async function run() {
       const result = await reviewsCollection.insertOne(product);
       res.send(result);
     });
+
+    // GETTING REVIEWS
+    app.get("/getReviews", async (req, res) => {
+      const result = await reviewsCollection.find({}).toArray();
+      res.send(result);
+    });
   } finally {
     // Ensures that the client will close when you finish/error
     //   await client.close();
