@@ -3,9 +3,24 @@ const app = express();
 require("dotenv").config();
 const port = process.env.PORT || 5000;
 const cors = require("cors");
+const admin = require("firebase-admin");
 const { MongoClient } = require("mongodb");
 const ObjectId = require("mongodb").ObjectId;
 
+// Firebase Admin Initialization
+
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+// console.log(serviceAccount, JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT));
+// console.log(
+//   JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT).client_x509_cert_url ===
+//     serviceAccount.client_x509_cert_url
+// );
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
@@ -14,6 +29,17 @@ const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
+async function verifyToken(req, res, next) {
+  if (req.headers?.authorization?.startsWith("Bearer ")) {
+    const idToken = req.headers.authorization.split("Bearer ")[1];
+    try {
+      const decodedUser = await admin.auth().verifyIdToken(idToken);
+      req.decodedUserEmail = decodedUser.email;
+    } catch {}
+  }
+  next();
+}
 
 async function run() {
   try {
@@ -63,11 +89,15 @@ async function run() {
     });
 
     // GET ORDERS BY USER EMAIL
-    app.get("/myOrders/:email", async (req, res) => {
+    app.get("/myOrders/:email", verifyToken, async (req, res) => {
       const mail = req.params.email;
-      const query = { email: mail };
-      const orders = await orderCollection.find(query).toArray();
-      res.json(orders);
+      if (req.decodedUserEmail === mail) {
+        const query = { email: mail };
+        const orders = await orderCollection.find(query).toArray();
+        res.json(orders);
+      } else {
+        res.status(401).json({ message: "User Not Authorized" });
+      }
     });
 
     // CANCELING ORDER
