@@ -8,13 +8,7 @@ const { MongoClient } = require("mongodb");
 const ObjectId = require("mongodb").ObjectId;
 
 // Firebase Admin Initialization
-
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-// console.log(serviceAccount, JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT));
-// console.log(
-//   JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT).client_x509_cert_url ===
-//     serviceAccount.client_x509_cert_url
-// );
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
